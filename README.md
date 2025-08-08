@@ -50,7 +50,3 @@ Steps:
 - pandas
 - openpyxl
 - tkinter (comes preinstalled with Python)
-
-## License
-
-MIT License
