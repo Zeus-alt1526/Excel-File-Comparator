@@ -4,7 +4,6 @@ from tkinter import filedialog, ttk, messagebox
 from openpyxl import load_workbook
 from openpyxl.styles import PatternFill
 
-# Global variables
 df1 = None
 df2 = None
 
@@ -51,15 +50,12 @@ def compare_and_export():
     df1_copy[col1] = df1_copy[col1].astype(str).fillna("")
     df2_copy[col2] = df2_copy[col2].astype(str).fillna("")
 
-    # MATCHES
     matches = df1_copy[df1_copy[col1].isin(df2_copy[col2])]
     matches2 = df2_copy[df2_copy[col2].isin(df1_copy[col1])]
-
-    # MISSING
+    
     missing_in_file2 = df1_copy[~df1_copy[col1].isin(df2_copy[col2])]
     missing_in_file1 = df2_copy[~df2_copy[col2].isin(df1_copy[col1])]
 
-    # DIFFERENCES (row-wise compare for matched rows)
     df1_matched = df1_copy[df1_copy[col1].isin(matches[col1])]
     df2_matched = df2_copy[df2_copy[col2].isin(matches2[col2])]
 
@@ -84,7 +80,6 @@ def compare_and_export():
 
     diff_df = pd.DataFrame(differences)
 
-    # EXPORT
     out_file = "excel_comparison_output.xlsx"
     with pd.ExcelWriter(out_file, engine='openpyxl') as writer:
         matches.to_excel(writer, sheet_name="Matching Rows File1", index=False)
@@ -93,14 +88,12 @@ def compare_and_export():
         missing_in_file2.to_excel(writer, sheet_name="Missing in File2", index=False)
         missing_in_file1.to_excel(writer, sheet_name="Missing in File1", index=False)
 
-    # HIGHLIGHT Differences
     wb = load_workbook(out_file)
     ws = wb["Differences"]
     red_fill = PatternFill(start_color="FFFF0000", end_color="FFFF0000", fill_type="solid")
 
     for row in ws.iter_rows(min_row=2, max_row=ws.max_row):
         for cell in row:
-            # Highlight cells in File2 columns if not empty
             if cell.value and isinstance(cell.value, str) and ws.cell(1, cell.column).value.startswith("File2_"):
                 cell.fill = red_fill
 
@@ -108,26 +101,22 @@ def compare_and_export():
 
     messagebox.showinfo("Done", f"Comparison saved to {out_file}")
 
-# GUI Setup
 root = tk.Tk()
 root.title("Excel File Comparator")
 root.geometry("1000x400")
 
-# File 1 widgets
 tk.Label(root, text="Excel File 1:").grid(row=0, column=0, sticky='w', padx=10, pady=5)
 entry1 = tk.Entry(root, width=50)
 entry1.grid(row=0, column=1)
 tk.Button(root, text="Browse", command=lambda: browse_file(entry1)).grid(row=0, column=2)
 tk.Button(root, text="Load File 1", command=lambda: load_file(entry1, 1)).grid(row=0, column=3)
 
-# File 2 widgets
 tk.Label(root, text="Excel File 2:").grid(row=1, column=0, sticky='w', padx=10, pady=5)
 entry2 = tk.Entry(root, width=50)
 entry2.grid(row=1, column=1)
 tk.Button(root, text="Browse", command=lambda: browse_file(entry2)).grid(row=1, column=2)
 tk.Button(root, text="Load File 2", command=lambda: load_file(entry2, 2)).grid(row=1, column=3)
 
-# Column selection
 tk.Label(root, text="Compare Column in File 1:").grid(row=2, column=0, padx=10, pady=10, sticky='w')
 col_select1 = ttk.Combobox(root, width=40)
 col_select1.grid(row=2, column=1)
@@ -136,7 +125,6 @@ tk.Label(root, text="With Column in File 2:").grid(row=2, column=2, padx=10, pad
 col_select2 = ttk.Combobox(root, width=40)
 col_select2.grid(row=2, column=3)
 
-# Compare button
 tk.Button(root, text="Compare and Export", bg="lightgreen", command=compare_and_export).grid(
     row=4, column=0, columnspan=4, pady=30
 )
