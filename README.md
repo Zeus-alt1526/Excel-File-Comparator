@@ -82,13 +82,3 @@ Install with:
 ```bash
 pip install pandas openpyxl
 ```
-
----
-
-## 📸 Screenshots
-*(Add screenshots of your GUI here)*
-
----
-
-## 📜 License
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
